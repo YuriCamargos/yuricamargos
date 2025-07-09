@@ -1,200 +1,576 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Reflexão do Oráculo</title>
-  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/3208/3208727.png" type="image/png" />
-  <style>
-    :root {
-      --bg-light: linear-gradient(to bottom, #ece9e6, #ffffff);
-      --bg-dark: linear-gradient(to bottom, #1a1a1a, #2d2d2d);
-      --text-light: #222;
-      --text-dark: #eee;
-      --box-light: rgba(255, 255, 255, 0.92);
-      --box-dark: rgba(30, 30, 30, 0.92);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Instrumentos Industriais - Cargill AEI</title>
+    <meta name="description" content="Calculadora para conversões de laço de corrente 4-20mA e calibração de instrumentos industriais da Cargill">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
-      transition: background 0.5s ease;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-    .bg {
-      background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/5b/RWS_Tarot_01_Magician.jpg');
-      background-size: cover;
-      background-position: center;
-      position: absolute;
-      inset: 0;
-      opacity: 0.15;
-      z-index: 1;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
-    .container {
-      padding: 2rem;
-      border-radius: 15px;
-      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-      max-width: 600px;
-      text-align: center;
-      position: relative;
-      z-index: 2;
-      opacity: 0;
-      animation: fadeIn 1.2s ease-in-out forwards;
-      transition: background 0.5s ease, color 0.5s ease;
-    }
+        .header {
+            background: #006341;
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 99, 65, 0.3);
+        }
 
-    @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
-    }
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
 
-    h1 {
-      font-size: 1.6rem;
-      margin-bottom: 1rem;
-    }
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
 
-    .card-img {
-      width: 150px;
-      margin: 0 auto 1rem auto;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-    }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
 
-    .question {
-      font-size: 1.2rem;
-      font-weight: 500;
-      margin-top: 1rem;
-      min-height: 120px;
-      white-space: pre-wrap;
-    }
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    .footer {
-      margin-top: 2rem;
-      font-size: 0.85rem;
-    }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
 
-    .toggle-button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: none;
-      border: 1px solid #999;
-      border-radius: 5px;
-      padding: 5px 10px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      z-index: 10;
-    }
+        .card h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
 
-    body.light {
-      background: var(--bg-light);
-      color: var(--text-light);
-    }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
 
-    body.light .container {
-      background: var(--box-light);
-    }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
 
-    body.dark {
-      background: var(--bg-dark);
-      color: var(--text-dark);
-    }
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
 
-    body.dark .container {
-      background: var(--box-dark);
-    }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
 
-    body.dark .toggle-button {
-      border-color: #bbb;
-      color: #eee;
-    }
-  </style>
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #006341;
+        }
+
+        .preset-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .preset-btn {
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .preset-btn:hover {
+            background: #e8f5e8;
+            border-color: #006341;
+        }
+
+        .btn {
+            background: #006341;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #004d31;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-large {
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .calculation-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .calculation-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .calc-card {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+
+        .calc-card h3 {
+            color: #006341;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .result-display {
+            background: #e8f5e8;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            border-left: 4px solid #006341;
+        }
+
+        .result-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #006341;
+        }
+
+        .calibration-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .calibration-table th,
+        .calibration-table td {
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+
+        .calibration-table th {
+            background: #006341;
+            color: white;
+            font-weight: 600;
+        }
+
+        .calibration-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .export-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #363;
+            border: 1px solid #cfc;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            border-top: 1px solid #eee;
+            margin-top: 2rem;
+        }
+    </style>
 </head>
 <body>
-  <div class="bg"></div>
-  <button class="toggle-button" onclick="toggleModo()">🌗 Modo</button>
+    <div class="container">
+        <header class="header">
+            <h1>🔧 Calculadora de Instrumentos Industriais</h1>
+            <p>Cargill - Time AEI | Conversões 4-20mA e Calibração</p>
+        </header>
 
-  <div class="container">
-    <img class="card-img" id="cartaImagem" src="" alt="Carta do Tarô">
-    <h1>🔮 Reflexão do Oráculo</h1>
-    <p class="question" id="question"></p>
-    <div class="footer">Toque sua tag NFC novamente para outra pergunta.</div>
-  </div>
+        <div class="main-grid">
+            <div class="card">
+                <h2>Configuração do Instrumento</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="instrumentTag">Tag do Instrumento</label>
+                        <input type="text" id="instrumentTag" placeholder="Ex: PT-101">
+                    </div>
+                    <div class="form-group">
+                        <label for="instrumentType">Tipo</label>
+                        <select id="instrumentType">
+                            <option value="pressure">Pressão</option>
+                            <option value="temperature">Temperatura</option>
+                            <option value="flow">Vazão</option>
+                            <option value="level">Nível</option>
+                            <option value="custom">Personalizado</option>
+                        </select>
+                    </div>
+                </div>
 
-  <audio autoplay loop>
-    <source src="https://cdn.pixabay.com/download/audio/2021/11/23/audio_572f9b0e6b.mp3?filename=meditation-ambient-110206.mp3" type="audio/mpeg">
-    Seu navegador não suporta áudio HTML5.
-  </audio>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="minValue">Valor Mínimo (0%)</label>
+                        <input type="number" id="minValue" step="0.001" placeholder="0.0">
+                    </div>
+                    <div class="form-group">
+                        <label for="maxValue">Valor Máximo (100%)</label>
+                        <input type="number" id="maxValue" step="0.001" placeholder="100.0">
+                    </div>
+                </div>
 
-  <script>
-    const perguntas = [
-      "Quais recursos materiais você já possui que podem sustentar o que deseja construir?",
-      "De que forma sua relação com o dinheiro e a estabilidade tem limitado sua capacidade de ousar?",
-      "Você é capaz de consolidar sua base sem abandonar sua liberdade criativa?",
-      "O que sua vontade mais profunda está tentando lhe dizer — mesmo quando você a ignora?",
-      "Em que momentos você se sente dividido entre o que deseja e o que é esperado?",
-      "É possível para você unir sua paixão ao mundo concreto que o cerca?",
-      "O que os momentos de pausa estão tentando ensinar a você?",
-      "Você tem forçado respostas quando, na verdade, era o tempo quem precisava agir?",
-      "Você consegue aceitar o silêncio e a pausa como parte do seu caminho?",
-      "Por que você acredita que só será feliz se seguir apenas o ideal e não o real?",
-      "O que o impede de reconhecer que a realidade também pode ser sagrada?",
-      "Neste momento, o que está sendo pedido de você: preservar, ousar ou repousar?"
-    ];
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="unit">Unidade</label>
+                        <select id="unit">
+                            <option value="PSI">PSI</option>
+                            <option value="bar">bar</option>
+                            <option value="kPa">kPa</option>
+                            <option value="°C">°C</option>
+                            <option value="°F">°F</option>
+                            <option value="GPM">GPM</option>
+                            <option value="LPM">LPM</option>
+                            <option value="m">m</option>
+                            <option value="ft">ft</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="precision">Precisão Decimal</label>
+                        <select id="precision">
+                            <option value="0">0 casas</option>
+                            <option value="1">1 casa</option>
+                            <option value="2" selected>2 casas</option>
+                            <option value="3">3 casas</option>
+                        </select>
+                    </div>
+                </div>
 
-    const cartas = [
-      { nome: "O Mago", url: "https://upload.wikimedia.org/wikipedia/commons/5/5b/RWS_Tarot_01_Magician.jpg" },
-      { nome: "A Sacerdotisa", url: "https://upload.wikimedia.org/wikipedia/commons/8/88/RWS_Tarot_02_High_Priestess.jpg" },
-      { nome: "O Eremita", url: "https://upload.wikimedia.org/wikipedia/commons/4/4d/RWS_Tarot_09_Hermit.jpg" },
-      { nome: "A Força", url: "https://upload.wikimedia.org/wikipedia/commons/f/f5/RWS_Tarot_08_Strength.jpg" },
-      { nome: "A Morte", url: "https://upload.wikimedia.org/wikipedia/commons/d/d7/RWS_Tarot_13_Death.jpg" },
-      { nome: "A Estrela", url: "https://upload.wikimedia.org/wikipedia/commons/d/db/RWS_Tarot_17_Star.jpg" },
-      { nome: "A Lua", url: "https://upload.wikimedia.org/wikipedia/commons/7/7f/RWS_Tarot_18_Moon.jpg" },
-      { nome: "O Julgamento", url: "https://upload.wikimedia.org/wikipedia/commons/d/dd/RWS_Tarot_20_Judgement.jpg" },
-      { nome: "O Louco", url: "https://upload.wikimedia.org/wikipedia/commons/9/90/RWS_Tarot_00_Fool.jpg" },
-      { nome: "A Roda da Fortuna", url: "https://upload.wikimedia.org/wikipedia/commons/3/3c/RWS_Tarot_10_Wheel_of_Fortune.jpg" },
-      { nome: "O Enforcado", url: "https://upload.wikimedia.org/wikipedia/commons/2/2b/RWS_Tarot_12_Hanged_Man.jpg" },
-      { nome: "O Sol", url: "https://upload.wikimedia.org/wikipedia/commons/1/17/RWS_Tarot_19_Sun.jpg" }
-    ];
+                <div class="form-group">
+                    <label>Presets Comuns</label>
+                    <div class="preset-buttons">
+                        <div class="preset-btn" onclick="applyPreset(0, 100, 'PSI')">0-100 PSI</div>
+                        <div class="preset-btn" onclick="applyPreset(0, 10, 'bar')">0-10 bar</div>
+                        <div class="preset-btn" onclick="applyPreset(0, 100, '°C')">0-100 °C</div>
+                        <div class="preset-btn" onclick="applyPreset(0, 500, 'GPM')">0-500 GPM</div>
+                    </div>
+                </div>
 
-    const pergunta = perguntas[Math.floor(Math.random() * perguntas.length)];
-    const cartaSorteada = cartas[Math.floor(Math.random() * cartas.length)];
+                <button class="btn btn-large" onclick="applyConfiguration()">Aplicar Configuração</button>
 
-    const questionElement = document.getElementById("question");
-    const cartaImagem = document.getElementById("cartaImagem");
-    cartaImagem.src = cartaSorteada.url;
-    cartaImagem.alt = "Carta: " + cartaSorteada.nome;
+                <div id="alertContainer"></div>
 
-    let i = 0;
-    function digitarTexto() {
-      if (i < pergunta.length) {
-        questionElement.textContent += pergunta.charAt(i);
-        i++;
-        setTimeout(digitarTexto, 40);
-      }
-    }
+                <div class="calculation-section" id="calculationSection" style="display: none;">
+                    <div class="calc-card">
+                        <h3>🔄 Processo → Corrente</h3>
+                        <div class="form-group">
+                            <label for="processValue">Valor do Processo</label>
+                            <input type="number" id="processValue" step="0.001" placeholder="Digite o valor">
+                        </div>
+                        <div class="result-display" id="processResult">
+                            <div>Corrente: <span class="result-value" id="currentOutput">-- mA</span></div>
+                            <div>Percentual: <span id="percentageOutput">--%</span></div>
+                        </div>
+                    </div>
 
-    setTimeout(digitarTexto, 1000);
+                    <div class="calc-card">
+                        <h3>🔄 Corrente → Processo</h3>
+                        <div class="form-group">
+                            <label for="currentValue">Corrente (mA)</label>
+                            <input type="number" id="currentValue" step="0.001" min="4" max="20" placeholder="4.000 - 20.000">
+                        </div>
+                        <div class="result-display" id="currentResult">
+                            <div>Processo: <span class="result-value" id="processOutput">-- <span id="unitOutput"></span></span></div>
+                            <div>Percentual: <span id="percentageOutput2">--%</span></div>
+                        </div>
+                    </div>
+                </div>
 
-    function definirModoInicial() {
-      const hora = new Date().getHours();
-      const modoNoturno = hora >= 18 || hora < 6;
-      document.body.classList.add(modoNoturno ? 'dark' : 'light');
-    }
+                <button class="btn btn-large" id="calculateBtn" onclick="calculateValues()" style="display: none;">Calcular Valores</button>
+            </div>
 
-    function toggleModo() {
-      document.body.classList.toggle('dark');
-      document.body.classList.toggle('light');
-    }
+            <div class="card">
+                <h2>📊 Tabela de Calibração</h2>
+                <div id="calibrationTableContainer">
+                    <p style="color: #666; text-align: center; padding: 2rem;">Configure um instrumento para gerar a tabela de calibração</p>
+                </div>
+                
+                <div class="export-buttons" id="exportButtons" style="display: none;">
+                    <button class="btn" onclick="exportToPDF()">📄 Exportar PDF</button>
+                    <button class="btn" onclick="exportToCSV()">📊 Exportar CSV</button>
+                </div>
+            </div>
+        </div>
 
-    definirModoInicial();
-  </script>
+        <footer class="footer">
+            <p>© 2024 Cargill - Time AEI | Calculadora de Instrumentos Industriais v1.0</p>
+        </footer>
+    </div>
+
+    <script>
+        let currentConfig = null;
+
+        function showAlert(message, type = 'error') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(alert);
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        function applyPreset(min, max, unit) {
+            document.getElementById('minValue').value = min;
+            document.getElementById('maxValue').value = max;
+            document.getElementById('unit').value = unit;
+        }
+
+        function applyConfiguration() {
+            const tag = document.getElementById('instrumentTag').value || `INST-${Date.now()}`;
+            const type = document.getElementById('instrumentType').value;
+            const minValue = parseFloat(document.getElementById('minValue').value);
+            const maxValue = parseFloat(document.getElementById('maxValue').value);
+            const unit = document.getElementById('unit').value;
+            const precision = parseInt(document.getElementById('precision').value);
+
+            if (isNaN(minValue) || isNaN(maxValue)) {
+                showAlert('Por favor, insira valores numéricos válidos.');
+                return;
+            }
+
+            if (minValue >= maxValue) {
+                showAlert('O valor máximo deve ser maior que o mínimo.');
+                return;
+            }
+
+            currentConfig = { tag, type, minValue, maxValue, unit, precision };
+            
+            showAlert('Configuração aplicada com sucesso!', 'success');
+            
+            // Show calculation section
+            document.getElementById('calculationSection').style.display = 'grid';
+            document.getElementById('calculateBtn').style.display = 'block';
+            document.getElementById('unitOutput').textContent = unit;
+            
+            // Generate calibration table
+            generateCalibrationTable();
+            
+            // Show export buttons
+            document.getElementById('exportButtons').style.display = 'grid';
+        }
+
+        function calculateValues() {
+            if (!currentConfig) return;
+
+            const processValue = parseFloat(document.getElementById('processValue').value);
+            const currentValue = parseFloat(document.getElementById('currentValue').value);
+
+            // Calculate process to current
+            if (!isNaN(processValue)) {
+                const result = calculateCurrentFromProcess(processValue, currentConfig.minValue, currentConfig.maxValue);
+                document.getElementById('currentOutput').textContent = `${result.current.toFixed(3)} mA`;
+                document.getElementById('percentageOutput').textContent = `${result.percentage.toFixed(1)}%`;
+            }
+
+            // Calculate current to process
+            if (!isNaN(currentValue) && currentValue >= 4 && currentValue <= 20) {
+                const result = calculateProcessFromCurrent(currentValue, currentConfig.minValue, currentConfig.maxValue);
+                document.getElementById('processOutput').innerHTML = `${result.process.toFixed(currentConfig.precision)} <span id="unitOutput">${currentConfig.unit}</span>`;
+                document.getElementById('percentageOutput2').textContent = `${result.percentage.toFixed(1)}%`;
+            }
+        }
+
+        function calculateCurrentFromProcess(processValue, minValue, maxValue) {
+            const span = maxValue - minValue;
+            const percentage = ((processValue - minValue) / span) * 100;
+            const current = 4 + (percentage / 100) * 16;
+            return { current, percentage };
+        }
+
+        function calculateProcessFromCurrent(current, minValue, maxValue) {
+            const percentage = ((current - 4) / 16) * 100;
+            const span = maxValue - minValue;
+            const process = minValue + (percentage / 100) * span;
+            return { process, percentage };
+        }
+
+        function generateCalibrationTable() {
+            const percentages = [0, 25, 50, 75, 100];
+            const span = currentConfig.maxValue - currentConfig.minValue;
+            
+            let tableHTML = `
+                <table class="calibration-table">
+                    <thead>
+                        <tr>
+                            <th>%</th>
+                            <th>Valor (${currentConfig.unit})</th>
+                            <th>Corrente (mA)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            percentages.forEach(percentage => {
+                const value = currentConfig.minValue + (percentage / 100) * span;
+                const current = 4 + (percentage / 100) * 16;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${percentage}%</td>
+                        <td>${value.toFixed(currentConfig.precision)}</td>
+                        <td>${current.toFixed(3)}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += '</tbody></table>';
+            document.getElementById('calibrationTableContainer').innerHTML = tableHTML;
+        }
+
+        function exportToPDF() {
+            if (!currentConfig) return;
+            
+            const percentages = [0, 25, 50, 75, 100];
+            const span = currentConfig.maxValue - currentConfig.minValue;
+            
+            let content = `Calculadora de Instrumentos Industriais - Cargill AEI\n\n`;
+            content += `Instrumento: ${currentConfig.tag}\n`;
+            content += `Tipo: ${currentConfig.type}\n`;
+            content += `Faixa: ${currentConfig.minValue} - ${currentConfig.maxValue} ${currentConfig.unit}\n`;
+            content += `Precisão: ${currentConfig.precision} casas decimais\n\n`;
+            
+            content += `Tabela de Calibração:\n`;
+            content += `%\tValor (${currentConfig.unit})\tmA\n`;
+            
+            percentages.forEach(percentage => {
+                const value = currentConfig.minValue + (percentage / 100) * span;
+                const current = 4 + (percentage / 100) * 16;
+                content += `${percentage}%\t${value.toFixed(currentConfig.precision)}\t${current.toFixed(3)}\n`;
+            });
+            
+            content += `\nData: ${new Date().toLocaleString('pt-BR')}\n`;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `calibracao_${currentConfig.tag}_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportToCSV() {
+            if (!currentConfig) return;
+            
+            const percentages = [0, 25, 50, 75, 100];
+            const span = currentConfig.maxValue - currentConfig.minValue;
+            
+            let csvContent = 'Instrumento,Tipo,Faixa Min,Faixa Max,Unidade,Precisão\n';
+            csvContent += `${currentConfig.tag},${currentConfig.type},${currentConfig.minValue},${currentConfig.maxValue},${currentConfig.unit},${currentConfig.precision}\n\n`;
+            
+            csvContent += 'Percentual,Valor,Corrente (mA)\n';
+            
+            percentages.forEach(percentage => {
+                const value = currentConfig.minValue + (percentage / 100) * span;
+                const current = 4 + (percentage / 100) * 16;
+                csvContent += `${percentage}%,${value.toFixed(currentConfig.precision)},${current.toFixed(3)}\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `calibracao_${currentConfig.tag}_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Auto-calculate on input change
+        document.getElementById('processValue').addEventListener('input', calculateValues);
+        document.getElementById('currentValue').addEventListener('input', calculateValues);
+    </script>
 </body>
 </html>
